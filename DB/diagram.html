@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DB Diagram</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/code-place.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/untitled.css">
+    <link rel="stylesheet" href="css/openform.css">
+
+</head>
+<body>
+
+    <!-- Nhúng FontAwesome để có icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- pop up -->
+    <div id="popupContainerHere">
+        <!-- Overlay nền mờ -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+
+    <!-- Popup -->
+    <div class="popup-container" id="popupContainer">
+        <div class="popup-content">
+            <!-- Cột 1 -->
+            <div class="sidebar">
+                <div class="user-section">
+                    <div class="user-dropdown">
+                        <span id="userEmail">nguynhiem16321@gmail.com</span>
+                    </div>
+                    <ul class="dropdown-menu" id="dropdownMenu">
+                        <li>Option 1</li>
+                        <li>Option 2</li>
+                    </ul>
+                </div>
+                <div class="new-diagram">
+                    <button class="new-btn">➕ New Diagram</button>
+                    <button class="new-btn">➕ New Sample Diagram</button>
+                </div>
+            </div>
+
+            <!-- Cột 2 -->
+            <div class="main-content">
+                <div class="search-bar">
+                    <i class="fa fa-search" style="color:white;"></i> 
+                    <input type="text" id="searchInput" placeholder="Search Diagrams" onkeyup="searchTable()">
+                    <span class="info">Free Plan | Diagrams: 5/10</span>
+                    <div class="close-popup-btn closebtn" onclick="closePopup()">&times;</div>
+                </div>
+                <div class="table-file">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Owner</th>
+                                <th>Date Modified</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <!-- Dữ liệu sẽ được thêm ở đây -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+
+    <header class="header">
+        <!-- <div class="header-left">
+            <img src="https://trudan.github.io/dbdiagram-oss/img/logo.4c4ad015.png" alt="dbdiagram-logo" class="logo">
+        </div> -->
+
+        <div class="header-center">
+            <img src="https://trudan.github.io/dbdiagram-oss/img/logo.4c4ad015.png" alt="dbdiagram-logo" class="logo">
+            <button class="header-btn" onclick="openPopup()"><i class="fa-solid fa-folder"></i>Open&#160;Untitled</button>
+            <button class="header-btn" onclick="toggleForm()"><i class="fa-solid fa-floppy-disk"></i><b>SAVE</b></button>
+            <button class="header-btn"><i class="fa-solid fa-clock"></i><b>HISTORY</b></button>
+            <div class="dropdown">
+                <button class="header-btn"><i class="fa-solid fa-file-import"></i> IMPORT&#160;▼</button>
+                <div class="dropdown-menu">
+                    <a href="#"><i class="fa-solid fa-file-code"></i> JSON</a>
+                    <input type="file" id="sqlFileInput" accept=".sql" style="display: none;">
+                    <a href="#" id="mysqlToDbml"><i class="fa-solid fa-database"></i> MySQL</a>
+                    <a href="#"><i class="fa-solid fa-database"></i> PostgreSQL</a>
+                    <a href="#"><i class="fa-solid fa-server"></i> SQL Server</a>
+                    <hr>
+                    <a href="#"><i class="fa-solid fa-file-image"></i> SVG</a>
+                    <a href="#"><i class="fa-solid fa-image"></i> PNG</a>
+                    <a href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
+                </div>
+            </div>
+
+            <!-- Dropdown EXPORT -->
+            <div class="dropdown">
+                <button class="header-btn"><i class="fa-solid fa-file-export"></i> EXPORT&#160;▼</button>
+                <div class="dropdown-menu">
+                    <a href="#"><i class="fa-solid fa-file-code"></i> JSON</a>
+                    <a href="#" id="generateSQL"><i class="fa-solid fa-database"></i> MySQL</a>
+                    <a href="#"><i class="fa-solid fa-database"></i> PostgreSQL</a>
+                    <a href="#"><i class="fa-solid fa-server"></i> SQL Server</a>
+                    <hr>
+                    <a href="#"><i class="fa-solid fa-file-image"></i> SVG</a>
+                    <a href="#"><i class="fa-solid fa-image"></i> PNG</a>
+                    <a href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
+                </div>
+            </div>
+            <!-- <button class="header-btn"><i class="fa-solid fa-upload"></i> Publish</button>    -->
+        </div>
+
+        <div class="header-right">
+            <div class="dropdown">
+                <button class="header-btn"><i class="fa-solid fa-question-circle"></i> Help ▼</button>
+                <div class="dropdown-menu">
+                    <a href="#"><i class="fa-solid fa-book"></i> Documentation</a>
+                    <a href="#"><i class="fa-solid fa-bug"></i> Release Notes</a>
+                    <a href="#"><i class="fa-solid fa-road"></i> Roadmap</a>
+                    <a href="#"><i class="fa-solid fa-comments"></i> Send Feedback</a>
+                    <a href="#"><i class="fa-solid fa-users"></i> Community</a>
+                    <a href="#"><i class="fa-solid fa-lightbulb"></i> Suggest Feature</a>
+                    <a href="#"><i class="fa-solid fa-envelope"></i> Contact Us</a>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button class="header-btn"><i class="fa-solid fa-database"></i> dbx ▼</button>
+                <div class="dropdown-menu  dropdown-db">
+                    <a href="#"><i class="fa-solid fa-folder"></i> My Projects</a>
+                    <a href="#"><i class="fa-solid fa-cog"></i> Settings</a>
+                    <a href="html/login.html"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+
+            <img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR5yc4FMBhJGJUVJoqe3E8ZwYqQcHdJrhp81hrqyf1s7bu34f5I" alt="Avatar" class="avatar">
+        </div>
+    </header>
+
+
+    
+
+    <div id="product-form" class="hidden">
+        <h2>Thêm Sản Phẩm</h2>
+        <input type="text" id="prod-name" placeholder="Tên sản phẩm">
+        <input type="number" id="prod-category" value="1" hidden>
+        <button onclick="createProduct()">Tạo sản phẩm</button>
+    </div>
+
+    <div class="container">
+        <!-- Bên trái (4 phần) -->
+        <div class="left-panel">
+            <div class="editor-container">
+                <div class="line-numbers" id="lineNumbers"></div>
+                <textarea id="dbmlInput" placeholder="Nhập DBML tại đây..."></textarea>
+            </div>  
+            <button onclick="renderDiagram()">Render Diagram</button>
+        </div>
+
+        <!-- Bên phải (6 phần) -->
+        <div class="right-panel">
+            <div class="diagram-container" id="diagramContainer">
+                <div id="diagram">
+                    <svg id="connections"></svg>
+                </div>
+            </div>
+
+            <!-- Thanh công cụ lơ lửng -->
+            <div class="toolbar">
+                <button onclick="zoomOut()">➖</button>
+                <button onclick="zoomToFit()">🔍&#160;Zoom</button>
+                <button onclick="zoomIn()">➕</button>
+                <span class="separator">|</span>
+                <button onclick="decreaseFontSize()">🔽&#160;A-</button>
+                <span id="fontSizeDisplay">16</span>
+                <button onclick="increaseFontSize()">🔼&#160;A+</button>
+                <span class="separator">|</span>
+                <button onclick="filterListItems()">🔼&#160;A+</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script/script.js"></script>
+    <script src="script/homepage.js"></script>
+    <script src="script/code-place.js"></script>
+    <script src="script/untitled.js"></script>
+    <script src="script/openform.js"></script>
+    <script src="script/export.js"></script>
+    <script src="script/import.js"></script>
+
+
+        
+    <script src="script/api.js"></script>
+
+
+
+
+
+
+</body>
+</html>
