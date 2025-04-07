@@ -249,8 +249,8 @@ function drawRelations() {
                                  relation.relationshipType === "many-to-many" ? "n" : "";
 
                 // Tạo label tại vị trí gần đầu đường nối
-                let label1 = createRelationLabel(label1Text, x1 + 5, y1 - 5);
-                let label2 = createRelationLabel(label2Text, x2 - 15, y2 - 5);
+                let label1 = createRelationLabel(label1Text, x1 + 20, y1 - 5);
+                let label2 = createRelationLabel(label2Text, x2 - 20, y2 - 5);
 
                 svg.appendChild(label1);
                 svg.appendChild(label2);

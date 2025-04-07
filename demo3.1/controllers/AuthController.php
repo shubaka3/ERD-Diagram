@@ -81,8 +81,8 @@ class AuthController {
     public function getUsers() {
         $user = new User($this->db);
     
-        if (isset($_GET["username"])) {
-            $result = $user->getUserByUsername($_GET["username"]);
+        if (isset($_GET["email"])) {
+            $result = $user->getUserByEmail($_GET["email"]);
             return json_encode($result ? $result : ["message" => "User not found"], JSON_UNESCAPED_UNICODE);
         } elseif (isset($_GET["current"])) {
             // Lấy user hiện tại từ $GLOBALS
@@ -95,6 +95,5 @@ class AuthController {
             return json_encode($user->getAllUsers(), JSON_UNESCAPED_UNICODE);
         }
     }
-    
 }
 ?>

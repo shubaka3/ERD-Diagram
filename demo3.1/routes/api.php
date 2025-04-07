@@ -4,6 +4,8 @@ require __DIR__ . "/../middleware/AuthMiddleware.php";
 require __DIR__ . "/../controllers/AuthController.php";
 require __DIR__ . "/../controllers/ProductController.php";
 require __DIR__ . "/../controllers/CategoryController.php";
+require __DIR__ . "/../controllers/CommentController.php";
+require __DIR__ . "/../controllers/SharedController.php";
 
 
 $db = (new Database())->getConnection();
@@ -11,6 +13,8 @@ $authMiddleware = new AuthMiddleware();
 $authController = new AuthController($db);
 $productController = new ProductController($db);
 $categoryController = new CategoryController($db);
+$commentController = new CommentController($db);
+$sharedController = new SharedController($db);
 
 
 
@@ -130,7 +134,48 @@ switch ($request_uri) {
                 echo json_encode($commentController->delete($comment_id));
             }
             break;
-        
+            // Lấy tất cả shared
+        // Router example
+
+    // Tạo chia sẻ
+    case "/shared":
+        if ($method === "POST") {
+            echo json_encode($sharedController->create($data));
+        }
+        break;
+
+    // Cập nhật chia sẻ
+    case preg_match("#^/shared/(\d+)$#", $request_uri, $matches) && $method === "PUT" ? true : false:
+        $shared_id = $matches[1];
+        echo json_encode($sharedController->update($shared_id, $data));
+        break;
+
+    // Lấy chia sẻ theo ID
+    case preg_match("#^/shared/(\d+)$#", $request_uri, $matches) && $method === "GET" ? true : false:
+        $shared_id = $matches[1];
+        echo json_encode($sharedController->getSharedById($shared_id));
+        break;
+
+    // Lấy chia sẻ theo Product ID
+    case preg_match("#^/shared/product/(\d+)$#", $request_uri, $matches) && $method === "GET" ? true : false:
+        $product_id = $matches[1];
+        echo json_encode($sharedController->getSharedByProductId($product_id));
+        break;
+
+    // Lấy chia sẻ theo User Inviter (User Invited)
+    case preg_match("#^/shared/user/(\d+)$#", $request_uri, $matches) && $method === "GET" ? true : false:
+        $user_invt = $matches[1];
+        echo json_encode($sharedController->getSharedByUserInvt($user_invt));
+        break;
+
+    // Xoá chia sẻ
+    case preg_match("#^/shared/(\d+)$#", $request_uri, $matches) && $method === "DELETE" ? true : false:
+        $shared_id = $matches[1];
+        echo json_encode($sharedController->delete($shared_id));
+        break;
+
+    
+
     default:
         http_response_code(404);
         echo json_encode(["error" => "Endpoint not found"]);

@@ -57,6 +57,14 @@ class User {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getUserByEmail($email) {
+        $query = "SELECT id, username, email FROM " . $this->table_name . " WHERE email = :email";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":email", $email);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getUserById($id) {
         $query = "SELECT id, username, email FROM " . $this->table_name . " WHERE id = :id";
         $stmt = $this->conn->prepare($query);

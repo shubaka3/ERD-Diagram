@@ -91,6 +91,18 @@ class Migration {
               FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
           )
         ");
+        $this->conn->exec("
+            CREATE TABLE IF NOT EXISTS shared (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                product_id INT NOT NULL,
+                user_invt INT NOT NULL,
+                permision VARCHAR(50) NOT NULL DEFAULT 'view',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_invt) REFERENCES users(id) ON DELETE CASCADE
+            )
+        ");
+
       
         return true;
     } catch (PDOException $e) {
