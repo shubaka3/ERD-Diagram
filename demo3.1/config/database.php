@@ -4,7 +4,7 @@ if (!class_exists('Database')) { // Kiểm tra nếu class chưa tồn tại
         private $host = "localhost";
         private $db_name = "demo9"; // Tên database
         private $username = "root"; // Username mặc định của XAMPP
-        private $password = ""; // Password mặc định của XAMPP (để trống)
+        private $password = "1234"; // Password mặc định của XAMPP (để trống)
         public $conn;
 
         public function getConnection() {
