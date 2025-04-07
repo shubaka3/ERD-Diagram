@@ -126,27 +126,69 @@ document.getElementById("update-prod-result").innerText = JSON.stringify(data, n
 async function getAllProducts() {
     let data = await fetchData(`http://localhost:8000/productuser/${user.user_id}`, "GET", null, true);
 
-    
-    // console.log("📩 Dữ liệu từ API:", data);
-    // console.log("📢 Kiểu dữ liệu:", typeof data);
+    let share = await fetchData(`http://localhost:8000/shared/user/${user.user_id}`, "GET", null, true);
 
-    // 🔹 Nếu dữ liệu trả về là string JSON, cần chuyển sang object
+    
+    console.log("Dữ liệu trả về từ API share:", share);
+    console.log("Kiểu dữ liệu của share:", Array.isArray(share) ? "Mảng" : "Không phải mảng");
+
+    let productbyshareduser = [];
+
+    // Nếu share là mảng và có phần tử
+    if (Array.isArray(share) && share.length > 0) {
+        let sharedPromises = [];
+    
+        share.forEach(item => {
+            let promise = fetchData(`http://localhost:8000/product/${item.product_id}`, "GET", null, true)
+                .then(products => {
+                    console.log("product shared");
+                    console.log(products);
+    
+                    if (typeof products === "string") {
+                        try {
+                            products = JSON.parse(products);
+                        } catch (err) {
+                            console.error("❌ Lỗi JSON.parse:", err);
+                            products = [];
+                        }
+                    }
+    
+                    // Đảm bảo là mảng (có thể API trả về 1 object thay vì mảng)
+                    if (!Array.isArray(products)) {
+                        products = [products];
+                    }
+    
+                    // Gắn thêm source rồi trả về
+                    return products.map(product => ({ ...product, source: "Shared User" }));
+                });
+    
+            sharedPromises.push(promise);
+        });
+    
+        // Đợi tất cả fetch hoàn tất
+        let sharedResults = await Promise.all(sharedPromises);
+    
+        // Gộp tất cả mảng nhỏ thành 1 mảng lớn
+        productbyshareduser = sharedResults.flat();
+    }
+    
+    // Nếu data là string, parse về object
     if (typeof data === "string") {
         try {
             data = JSON.parse(data);
         } catch (err) {
-            console.error("❌ Lỗi JSON.parse:", err);
-            return;
+            console.error("❌ Lỗi JSON.parse data:", err);
+            data = [];
         }
     }
 
-    // 🔹 Kiểm tra API có trả về mảng hợp lệ không
-    if (!Array.isArray(data)) {
-        console.error("❌ API không trả về mảng hợp lệ:", data);
-        return;
-    }
+    // Gắn thêm thuộc tính source cho data gốc
+    data = data.map(product => ({ ...product, source: "My Product" }));
 
-    // 🔹 Lấy phần tử tbody
+    // Gộp tất cả sản phẩm
+    let allProducts = [...data, ...productbyshareduser];
+
+    // Kiểm tra tbody
     let tableBody = document.getElementById("products-table-body");
     if (!tableBody) {
         console.error("❌ Không tìm thấy tbody #products-table-body!");
@@ -156,19 +198,33 @@ async function getAllProducts() {
     tableBody.innerHTML = ""; // 🧹 Xóa dữ liệu cũ trước khi cập nhật
 
     // 🔹 Duyệt qua từng sản phẩm để thêm vào bảng
-    data.forEach(product => {
+    allProducts.forEach(product => {
         let row = document.createElement("tr"); // ⚡️ Tạo thẻ <tr> thay vì `innerHTML`
         row.innerHTML = `
             <td>${product.name}</td>
-            <td>${product.created_by}</td>
+            <td>${product.source}</td>
             <td>${product.created_at}</td>
-            <td>${product.last_updated}</td>
+            <td>${product.updated_at}</td>
             <td>
               
                 <button class="action-btn" onclick="toggleActionMenu(this)">⋮</button>
                 <ul class="action-menu" id="untitled-ul">
                     <button onclick="deleteRow(this,${product.id})">Deletet</button>
                     <button onclick="getProductById(${product.id})">Xem chi tiết</button>
+                    <button onclick="showShareForm()">Chia sẽ</button>
+
+                        <!-- Form chia sẻ (ẩn mặc định) -->
+                        <div id="share-form-container" style="display: none;">
+                            <input type="text" id="shared-user-invt" placeholder="Nhập email người dùng">
+                            <br>
+                            <select id="shared-permision">
+                                <option value="view">View</option>
+                                <option value="edit">Edit</option>
+                            </select>
+                            <br>
+                            <button onclick="createShared(${product.id})">Gửi</button>
+                            <button onclick="closeShareForm()">Hủy</button>
+                        </div>
                 </ul>
             </td>
         `;
@@ -196,6 +252,7 @@ async function getProductById(productId) {
     // // Hiển thị phần thông tin chi tiết (nếu đang ẩn)
     // document.getElementById("product-detail-container").style.display = "block";
     document.getElementById("dbmlInput").value = data.detail;
+    document.getElementById("comment-open").value = data.id;
     renderDiagram();
 }
 
@@ -229,6 +286,46 @@ async function deleteProduct(productId) {
 
     getAllProducts();
 }
+
+
+async function createShared(productId) {
+    // Gọi hàm getUserByName để lấy thông tin người dùng
+    let email = document.getElementById("shared-user-invt").value;
+    let permision = document.getElementById("shared-permision").value;
+    let user = await fetchData(`http://localhost:8000/users?email=${email}`, "GET", null, true);
+    let userData = JSON.parse (user);
+
+    // Kiểm tra nếu dữ liệu người dùng tồn tại
+    if (userData && userData.id) {
+        // Gửi yêu cầu POST để tạo chia sẻ
+        let data = await fetchData("http://localhost:8000/shared", "POST", {
+            user_invt: userData.id,  // Sử dụng userId từ kết quả của getUserByName
+            product_id: productId,
+            permision: permision
+        }, true);
+
+        // Hiển thị kết quả chia sẻ
+        // document.getElementById("shared-result").innerText = JSON.stringify(data, null, 2);
+        getAllProducts();
+    } else {
+        // Hiển thị thông báo lỗi nếu không tìm thấy người dùng
+        // document.getElementById("shared-result").innerText = "User not found.";
+        console.log("user not found");
+    }
+}
+
+function showShareForm() {
+    document.getElementById("share-form-container").style.display = "block";
+    document.getElementById("shared-user-invt").value = '';  // Xóa trường input
+    document.getElementById("shared-permision").value = 'view';  // Chọn quyền mặc định là 'view'
+}
+
+// Đóng form chia sẻ
+function closeShareForm() {
+    document.getElementById("share-form-container").style.display = "none";
+}
+
+
 
 // ✅ Gọi hàm lấy tất cả sản phẩm khi trang tải xong
 document.addEventListener("DOMContentLoaded", getAllProducts);

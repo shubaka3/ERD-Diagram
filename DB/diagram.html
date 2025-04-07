@@ -111,7 +111,35 @@
                     <a href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
                 </div>
             </div>
-            <!-- <button class="header-btn"><i class="fa-solid fa-upload"></i> Publish</button>    -->
+            
+            <div class="dropdown">
+                <button class="header-btn" id ="comment-open" onclick="openCommentPopup()"> <i class="fa-solid fa-file-export"></i> Comment&#160;▼</button>
+            </div>
+
+        <!-- Overlay -->
+        <div class="popup-overlay" id="comment-popup-overlay" onclick="closeCommentPopup()"></div>
+
+        <!-- Popup container -->
+        <div class="popup-container" id="comment-popup">
+        <div style="padding: 20px; color: white; font-family: Arial, sans-serif; max-height: 80vh; overflow-y: auto;">
+            <h3 style="margin-bottom: 20px;">💬 Bình luận sản phẩm</h3>
+
+            <!-- Form thêm comment -->
+            <div style="display: flex; margin-bottom: 20px;">
+            <img src="https://i.pravatar.cc/40" alt="Avatar" style="border-radius: 50%; width: 40px; height: 40px; margin-right: 10px;">
+            <textarea id="comment-main" placeholder="Viết bình luận..." style="flex: 1; border-radius: 20px; padding: 10px 15px; border: none; resize: none; background: #3A3B3C; color: white;"></textarea>
+            </div>
+            <button onclick="submitReplyComment()" style="background: #2374e1; color: white; padding: 8px 20px; border: none; border-radius: 20px; cursor: pointer;">Đăng</button>
+
+            <hr style="border-color: #555; margin: 20px 0;">
+
+            <!-- Danh sách bình luận -->
+            <div class="comment-list" id="comment-list">
+            <!-- Bình luận sẽ được thêm vào đây -->
+            </div>
+        </div>
+        </div>
+                    <!-- <button class="header-btn"><i class="fa-solid fa-upload"></i> Publish</button>    -->
         </div>
 
         <div class="header-right">
@@ -136,10 +164,7 @@
                     <a href="html/login.html"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
-            <!-- ✅ Added Subscribe button here -->
-            <button class="header-btn" onclick="sendPaymentRequest()">
-                <i class="fa-solid fa-bell"></i> Subscribe
-            </button>
+
             <img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR5yc4FMBhJGJUVJoqe3E8ZwYqQcHdJrhp81hrqyf1s7bu34f5I" alt="Avatar" class="avatar">
         </div>
     </header>
@@ -199,7 +224,7 @@
 
     <script src="script/api.js"></script>
 
-
+    <script src="script/cmt.js"></script>
 
 
 

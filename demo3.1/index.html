@@ -65,6 +65,7 @@
         <button onclick="createProduct()">Tạo sản phẩm</button>
         <pre id="prod-result"></pre>
 
+
         <h2>Cập nhật sản phẩm</h2>
         <input type="number" id="update-prod-id" placeholder="ID sản phẩm">
         <input type="text" id="update-prod-name" placeholder="Tên sản phẩm mới">
@@ -77,6 +78,33 @@
         <h2>📌 Lấy toàn bộ sản phẩm</h2>
         <button onclick="getAllProducts()">Lấy danh sách</button>
         <pre id="all-products"></pre>
+
+        <h2>Tạo chia sẻ</h2>
+        <input type="number" id="shared-user-invt" placeholder="ID người mời">
+        <input type="number" id="shared-product-id" placeholder="ID sản phẩm">
+        <input type="text" id="shared-permision" placeholder="Permission (default 'view')">
+        <button onclick="createShared()">Tạo chia sẻ</button>
+        <pre id="shared-result"></pre>
+    
+        <h2>📌 Lấy tất cả chia sẻ</h2>
+        <button onclick="getAllShared()">Lấy tất cả chia sẻ</button>
+        <pre id="all-shared"></pre>
+    
+        <h2>📌 Lấy chia sẻ theo ID</h2>
+        <input type="number" id="shared-id" placeholder="ID chia sẻ">
+        <button onclick="getSharedById()">Lấy chia sẻ</button>
+        <pre id="shared-by-id"></pre>
+    
+        <h2>📌 Lấy chia sẻ theo Product ID</h2>
+        <input type="number" id="shared-product-id-filter" placeholder="Product ID">
+        <button onclick="getSharedByProductId()">Lấy chia sẻ</button>
+        <pre id="shared-by-product-id"></pre>
+    
+        <h2>❌ Xoá chia sẻ</h2>
+        <input type="number" id="delete-shared-id" placeholder="ID chia sẻ cần xoá">
+        <button onclick="deleteShared()">Xoá chia sẻ</button>
+        <pre id="delete-shared-result"></pre>
+
     
         <h2>🔎 Tìm sản phẩm theo tên</h2>
         <input type="text" id="search-product" placeholder="Nhập tên sản phẩm">
@@ -95,13 +123,21 @@
         
         <!-- Tạo comment -->
          
+        <!-- <h2>Tạo bình luận</h2>
+        <input type="number" id="create-comment-product-id" placeholder="ID sản phẩm">
+        <input type="number" id="create-comment-user-id" placeholder="ID người dùng">
+        <textarea id="create-comment-content" placeholder="Nội dung bình luận"></textarea>
+        <input type="number" id="create-comment-parent-id" placeholder="ID comment cha (nếu là trả lời)">
+        <button onclick="createComment()">Tạo bình luận</button>
+        <pre id="create-comment-result"></pre> -->
+
         <h2>Tạo bình luận</h2>
-        <input type="number" id="comment-product-id" placeholder="ID sản phẩm">
-        <input type="number" id="comment-user-id" placeholder="ID người dùng">
-        <textarea id="comment-content" placeholder="Nội dung bình luận"></textarea>
-        <input type="number" id="comment-parent-id" placeholder="ID comment cha (nếu là trả lời)">
-        <button type="button" onclick="createComment()">Tạo bình luận</button>
-        <pre id="comment-result"></pre>
+        <input type="number" id="haha" placeholder="ID sản phẩm">
+        <input type="number" id="cc" placeholder="ID người dùng">
+        <textarea id="cl" placeholder="Nội dung bình luận"></textarea>
+        <input type="number" id="hi" placeholder="ID danh mục">
+        <button onclick="createCmt()">Tạo bình luận</button>
+        <pre id="cmt-result"></pre>
 
 
         <!-- Lấy comment theo sản phẩm -->
@@ -197,8 +233,7 @@ async function getCurrentUser() {
 // ✅ Tìm user theo tên
 async function getUserByName() {
     let username = document.getElementById("search-username").value;
-    let data = await fetchData(`http://localhost:8000/users?username=${username}`, "GET", null, true);
-    document.getElementById("user-result").innerText = JSON.stringify(data, null, 2);
+    let data = await fetchData(`http://localhost:8000/users?email=${username}`, "GET", null, true);
 }
 // ✅ Tạo danh mục (cần token)
 async function createCategory() {
@@ -281,19 +316,16 @@ async function updateProduct() {
             let data = await fetchData(`http://localhost:8000/productuser/${userid.id}`, "GET", null, true);
             document.getElementById("product-result").innerText = JSON.stringify(data, null, 2);
         }
-    // Tạo comment mới
-        async function createComment() {
-            // Lấy dữ liệu từ các input
+
+        
+        async function createCmt() {
             let data = await fetchData("http://localhost:8000/comments", "POST", {
-                product_id: document.getElementById("comment-product-id").value,
-                user_id: document.getElementById("comment-user-id").value,
-                content: document.getElementById("comment-content").value,
-                parent_id: document.getElementById("comment-parent-id").value || null
+                        product_id: document.getElementById("haha").value,
+                        user_id: document.getElementById("cc").value,
+                        content: document.getElementById("cl").value,
+                        parent_id: document.getElementById("hi").value || null
             }, true);
 
-            // Hiển thị kết quả trả về
-            console.log(data);
-            document.getElementById("comment-result").innerText = JSON.stringify(data, null, 2);
         }
 
 
@@ -312,6 +344,46 @@ async function updateProduct() {
 
             document.getElementById("comment-result").innerText = JSON.stringify(data, null, 2);
         }
+
+        async function createShared() {
+            let data = await fetchData("http://localhost:8000/shared", "POST", {
+                user_invt: document.getElementById("shared-user-invt").value,
+                product_id: document.getElementById("shared-product-id").value,
+                permision: document.getElementById("shared-permision").value || 'view'
+            }, true);
+
+            document.getElementById("shared-result").innerText = JSON.stringify(data, null, 2);
+        }
+
+
+
+        // ✅ Lấy tất cả chia sẻ
+        async function getAllShared() {
+            let data = await fetchData("http://localhost:8000/shared", "GET", null, true);
+            document.getElementById("all-shared").innerText = JSON.stringify(data, null, 2);
+        }
+
+        // ✅ Lấy chia sẻ theo ID
+        async function getSharedById() {
+            let sharedId = document.getElementById("shared-id").value;
+            let data = await fetchData(`http://localhost:8000/shared/${sharedId}`, "GET", null, true);
+            document.getElementById("shared-by-id").innerText = JSON.stringify(data, null, 2);
+        }
+
+        // ✅ Lấy chia sẻ theo Product ID
+        async function getSharedByProductId() {
+            let productId = document.getElementById("shared-product-id-filter").value;
+            let data = await fetchData(`http://localhost:8000/shared/product/${productId}`, "GET", null, true);
+            document.getElementById("shared-by-product-id").innerText = JSON.stringify(data, null, 2);
+        }
+
+        // ✅ Xoá chia sẻ
+        async function deleteShared() {
+            let sharedId = document.getElementById("delete-shared-id").value;
+            let data = await fetchData(`http://localhost:8000/shared/${sharedId}`, "DELETE", null, true);
+            document.getElementById("delete-shared-result").innerText = JSON.stringify(data, null, 2);
+        }
+
 
 
     
